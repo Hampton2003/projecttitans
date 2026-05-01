@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0F172A">
+    <title>Project Titans</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4D03F;
+            --gold-dark: #B8960C;
+            --blue: #1E3A8A;
+            --blue-dark: #0F172A;
+            --blue-light: #3B82F6;
+            --white: #FFFFFF;
+            --gray: #94A3B8;
+            --gray-dark: #64748B;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --card-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--blue-dark);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(30, 58, 138, 0.2) 0%, transparent 60%);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 24px 16px 20px;
+            position: relative;
+        }
+
+        .logo-container {
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            margin-bottom: 4px;
+            letter-spacing: 3px;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 0.75rem;
+            color: var(--gray);
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .hero .date-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50px;
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 0.5px;
+        }
+
+        /* Quick Stats Row */
+        .quick-stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 16px;
+            margin-bottom: 20px;
+            gap: 8px;
+        }
+
+        .quick-stat {
+            flex: 1;
+            text-align: center;
+            padding: 12px 6px;
+            background: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.08);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-stat .q-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .quick-stat .q-label {
+            font-size: 0.6rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Balance Card */
+        .balance-card {
+            margin: 0 16px 20px;
+            padding: 24px 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(30, 58, 138, 0.2) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+        }
+
+        .balance-card .bal-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .balance-card .bal-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--white);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            margin-bottom: 4px;
+        }
+
+        .balance-card .bal-currency {
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .balance-card .bal-status {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--success);
+        }
+
+        .balance-card .bal-status i {
+            font-size: 0.7rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 16px;
+            margin-bottom: 14px;
+            margin-top: 24px;
+        }
+
+        .section-header .sec-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        .section-header .sec-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+
+        /* Mini Cards Grid */
+        .mini-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 16px;
+            margin-bottom: 20px;
+        }
+
+        .mini-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .mini-card .m-icon {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .mini-card .m-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--white);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .mini-card .m-label {
+            font-size: 0.6rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mini-card.gold .m-icon { color: var(--gold); }
+        .mini-card.blue .m-icon { color: var(--blue-light); }
+        .mini-card.red .m-icon { color: var(--danger); }
+        .mini-card.green .m-icon { color: var(--success); }
+
+        /* Chart Container */
+        .chart-wrapper {
+            margin: 0 16px 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-wrapper .chart-title {
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .chart-wrapper .chart-box {
+            position: relative;
+            height: 200px;
+        }
+
+        /* Expenditure List */
+        .exp-list {
+            padding: 0 16px;
+            margin-bottom: 20px;
+        }
+
+        .exp-item {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .exp-item .exp-icon-box {
+            width: 44px;
+            height: 44px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--danger);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .exp-item .exp-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .exp-item .exp-info .exp-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .exp-item .exp-info .exp-date {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .exp-item .exp-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--danger);
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        /* Contributors Horizontal Scroll */
+        .contrib-scroll {
+            display: flex;
+            gap: 10px;
+            padding: 0 16px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .contrib-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .contrib-card {
+            flex: 0 0 140px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            scroll-snap-align: start;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .contrib-card .c-rank {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: 2px solid var(--blue-dark);
+        }
+
+        .contrib-card.rank-1 .c-rank { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
+        .contrib-card.rank-2 .c-rank { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); color: #000; }
+        .contrib-card.rank-3 .c-rank { background: linear-gradient(135deg, #CD7F32, #A0522D); color: #fff; }
+        .contrib-card .c-rank { background: rgba(255,255,255,0.1); color: var(--gray); }
+
+        .contrib-card .c-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(30, 58, 138, 0.3));
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px auto 10px;
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+
+        .contrib-card .c-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contrib-card .c-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .contrib-card .c-attendance {
+            font-size: 0.65rem;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        /* Summary Bar */
+        .summary-bar {
+            margin: 0 16px 20px;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-bar .sum-item {
+            text-align: center;
+        }
+
+        .summary-bar .sum-item .sum-val {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--white);
+            display: block;
+        }
+
+        .summary-bar .sum-item .sum-lab {
+            font-size: 0.6rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px 16px 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .footer .f-brand {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .footer .f-text {
+            color: var(--gray-dark);
+            font-size: 0.7rem;
+            margin-top: 4px;
+        }
+
+        /* Swipe hint */
+        .swipe-hint {
+            text-align: center;
+            padding: 0 16px 10px;
+            font-size: 0.65rem;
+            color: var(--gray-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .swipe-hint i {
+            animation: swipeHint 2s ease-in-out infinite;
+        }
+
+        @keyframes swipeHint {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="logo-container">
+            <img src="1001432026.jpg" alt="Project Titans">
+        </div>
+        <h1>PROJECT TITANS</h1>
+        <p class="subtitle">Financial Dashboard</p>
+        <div class="date-badge">
+            <i class="fas fa-calendar"></i> Dec 2024 - Apr 2026
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="quick-stat fade-in" style="animation-delay: 0.1s">
+            <span class="q-value">63</span>
+            <span class="q-label">Members</span>
+        </div>
+        <div class="quick-stat fade-in" style="animation-delay: 0.2s">
+            <span class="q-value">17</span>
+            <span class="q-label">Months</span>
+        </div>
+        <div class="quick-stat fade-in" style="animation-delay: 0.3s">
+            <span class="q-value">3</span>
+            <span class="q-label">Perfect</span>
+        </div>
+        <div class="quick-stat fade-in" style="animation-delay: 0.4s">
+            <span class="q-value">111,600</span>
+            <span class="q-label">Spent</span>
+        </div>
+    </div>
+
+    <!-- Main Balance -->
+    <div class="balance-card slide-up" style="animation-delay: 0.2s">
+        <div class="bal-label">Current Account Balance</div>
+        <div class="bal-amount">942,900</div>
+        <div class="bal-currency">Ugandan Shillings</div>
+        <div class="bal-status">
+            <i class="fas fa-shield-alt"></i> Financially Healthy
+        </div>
+    </div>
+
+    <!-- Mini Stats Grid -->
+    <div class="mini-grid">
+        <div class="mini-card gold slide-up" style="animation-delay: 0.1s">
+            <i class="fas fa-coins m-icon"></i>
+            <span class="m-value">928,500</span>
+            <span class="m-label">Monthly Collections</span>
+        </div>
+        <div class="mini-card blue slide-up" style="animation-delay: 0.15s">
+            <i class="fas fa-plus-circle m-icon"></i>
+            <span class="m-value">126,000</span>
+            <span class="m-label">Project Money</span>
+        </div>
+        <div class="mini-card red slide-up" style="animation-delay: 0.2s">
+            <i class="fas fa-file-invoice m-icon"></i>
+            <span class="m-value">111,600</span>
+            <span class="m-label">Expenditures</span>
+        </div>
+        
+    </div>
+
+    <!-- Monthly Trend Chart -->
+    <div class="section-header">
+        <div class="sec-icon"><i class="fas fa-chart-line"></i></div>
+        <span class="sec-title">Monthly Trend</span>
+    </div>
+    <div class="chart-wrapper slide-up" style="animation-delay: 0.1s">
+        <div class="chart-box">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Financial Distribution -->
+    <div class="section-header">
+        <div class="sec-icon"><i class="fas fa-chart-pie"></i></div>
+        <span class="sec-title">Distribution</span>
+    </div>
+    <div class="chart-wrapper slide-up" style="animation-delay: 0.1s">
+        <div class="chart-box">
+            <canvas id="distChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Expenditures -->
+    <div class="section-header">
+        <div class="sec-icon"><i class="fas fa-hand-holding-usd"></i></div>
+        <span class="sec-title">Expenditures</span>
+    </div>
+    <div class="exp-list">
+        <div class="exp-item slide-up" style="animation-delay: 0.1s">
+            <div class="exp-icon-box"><i class="fas fa-heart"></i></div>
+            <div class="exp-info">
+                <div class="exp-name">Maryline's Father's Burial</div>
+                <div class="exp-date">January 2025</div>
+            </div>
+            <div class="exp-amount">51,300</div>
+        </div>
+        <div class="exp-item slide-up" style="animation-delay: 0.2s">
+            <div class="exp-icon-box"><i class="fas fa-sim-card"></i></div>
+            <div class="exp-info">
+                <div class="exp-name">SIM Card Renewal</div>
+                <div class="exp-date">March 2025</div>
+            </div>
+            <div class="exp-amount">9,000</div>
+        </div>
+        <div class="exp-item slide-up" style="animation-delay: 0.3s">
+            <div class="exp-icon-box"><i class="fas fa-gift"></i></div>
+            <div class="exp-info">
+                <div class="exp-name">Joel Kabarudu's Wedding</div>
+                <div class="exp-date">December 2025</div>
+            </div>
+            <div class="exp-amount">51,300</div>
+        </div>
+    </div>
+
+    <!-- Top Contributors -->
+    <div class="section-header">
+        <div class="sec-icon"><i class="fas fa-trophy"></i></div>
+        <span class="sec-title">Top Contributors</span>
+    </div>
+    <div class="swipe-hint">
+        <i class="fas fa-chevron-left"></i> Swipe to see more <i class="fas fa-chevron-right"></i>
+    </div>
+    <div class="contrib-scroll" id="contribScroll">
+        <!-- Populated by JS -->
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-bar slide-up" style="animation-delay: 0.2s">
+        <div class="sum-item">
+            <span class="sum-val">14,738</span>
+            <span class="sum-lab">Avg/contrib</span>
+        </div>
+        <div class="sum-item">
+            <span class="sum-val">58.7%</span>
+            <span class="sum-lab">Peak Partic.</span>
+        </div>
+        <div class="sum-item">
+            <span class="sum-val">89.4%</span>
+            <span class="sum-lab">Saved</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="f-brand">PROJECT TITANS</div>
+        <div class="f-text">Prepared by Hampton &bull; May 2026</div>
+        <div class="f-text">Building Community Through Financial Unity</div>
+    </footer>
+
+    <script>
+        // Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Chart defaults
+        Chart.defaults.color = '#94A3B8';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.03)';
+        Chart.defaults.font.family = 'Inter';
+        Chart.defaults.font.size = 10;
+
+        // Monthly Trend Chart
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['D','J','F','M','A','M','J','J','A','S','O','N','D','J','F','M','A'],
+                datasets: [{
+                    data: [104500,92000,92000,76000,74000,66000,58000,52000,54000,52000,42000,40000,36000,28000,26000,20000,16000],
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.08)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#D4AF37',
+                    pointBorderColor: '#0F172A',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#D4AF37',
+                        bodyColor: '#fff',
+                        borderColor: 'rgba(212, 175, 55, 0.3)',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            title: (items) => {
+                                const labels = ['Dec 2024','Jan 2025','Feb 2025','Mar 2025','Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026'];
+                                return labels[items[0].dataIndex];
+                            },
+                            label: (ctx) => 'Amount: ' + ctx.parsed.y.toLocaleString() + ' Shs'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.02)' },
+                        ticks: {
+                            maxTicksLimit: 5,
+                            callback: (v) => v >= 1000 ? (v/1000) + 'K' : v,
+                            font: { size: 9 }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 9 }, maxRotation: 0 }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Distribution Doughnut
+        const distCtx = document.getElementById('distChart').getContext('2d');
+        new Chart(distCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Collections','Project','Spent','Balance'],
+                datasets: [{
+                    data: [928500, 126000, 112100, 942900],
+                    backgroundColor: ['#D4AF37', '#3B82F6', '#EF4444', '#10B981'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 12,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { size: 10 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        borderColor: 'rgba(212, 175, 55, 0.3)',
+                        borderWidth: 1,
+                        padding: 10,
+                        callbacks: {
+                            label: (ctx) => {
+                                const total = ctx.dataset.data.reduce((a,b) => a+b, 0);
+                                const pct = ((ctx.parsed / total) * 100).toFixed(1);
+                                return ctx.label + ': ' + ctx.parsed.toLocaleString() + ' Shs (' + pct + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Contributors
+        const contributors = [
+            { name: 'Aditya', amount: 34000, attendance: '17/17', rank: 1 },
+            { name: 'Kato Truth', amount: 34000, attendance: '17/17', rank: 2 },
+            { name: 'Jane', amount: 34000, attendance: '17/17', rank: 3 },
+            { name: 'Hampton', amount: 32000, attendance: '16/17', rank: 4 },
+            { name: 'K. Joel', amount: 32000, attendance: '16/17', rank: 5 },
+            { name: 'Amos', amount: 30000, attendance: '15/17', rank: 6 },
+            { name: 'Annet', amount: 30000, attendance: '15/17', rank: 7 },
+            { name: 'B. Chrispus', amount: 30000, attendance: '15/17', rank: 8 },
+            { name: 'B. Edager', amount: 30000, attendance: '15/17', rank: 9 },
+            { name: 'Claire', amount: 30000, attendance: '15/17', rank: 10 }
+        ];
+
+        const scrollContainer = document.getElementById('contribScroll');
+        contributors.forEach(c => {
+            const card = document.createElement('div');
+            card.className = `contrib-card rank-${c.rank <= 3 ? c.rank : 'other'} slide-up`;
+            card.style.animationDelay = (c.rank * 0.05) + 's';
+            card.innerHTML = `
+                <div class="c-rank">${c.rank}</div>
+                <div class="c-avatar"><i class="fas fa-user"></i></div>
+                <div class="c-name">${c.name}</div>
+                <div class="c-amount">${c.amount.toLocaleString()}</div>
+                <div class="c-attendance">${c.attendance} months</div>
+            `;
+            scrollContainer.appendChild(card);
+        });
+    </script>
+</body>
+</html>
